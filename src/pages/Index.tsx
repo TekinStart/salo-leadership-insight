@@ -1,12 +1,55 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from 'react';
+import Header from '@/components/Header';
+import WelcomeSection from '@/components/WelcomeSection';
+import QuizSection from '@/components/QuizSection';
+import ResultSection from '@/components/ResultSection';
+import Footer from '@/components/Footer';
+import FloatingCTA from '@/components/FloatingCTA';
+
+type AppState = 'welcome' | 'quiz' | 'result';
 
 const Index = () => {
+  const [currentState, setCurrentState] = useState<AppState>('welcome');
+  const [quizScore, setQuizScore] = useState<number>(0);
+
+  const handleStartQuiz = () => {
+    setCurrentState('quiz');
+  };
+
+  const handleQuizComplete = (score: number) => {
+    setQuizScore(score);
+    setCurrentState('result');
+  };
+
+  const handleRestart = () => {
+    setCurrentState('welcome');
+    setQuizScore(0);
+  };
+
+  const handleBackToWelcome = () => {
+    setCurrentState('welcome');
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-white font-inter">
+      <Header />
+      
+      {currentState === 'welcome' && (
+        <WelcomeSection onStartQuiz={handleStartQuiz} />
+      )}
+      
+      {currentState === 'quiz' && (
+        <QuizSection onComplete={handleQuizComplete} onBack={handleBackToWelcome} />
+      )}
+      
+      {currentState === 'result' && (
+        <ResultSection score={quizScore} onRestart={handleRestart} />
+      )}
+      
+      <FloatingCTA visible={currentState === 'result'} />
+      
+      <Footer />
     </div>
   );
 };
